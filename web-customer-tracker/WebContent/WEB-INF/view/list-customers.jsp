@@ -20,15 +20,31 @@
 
 	<div id="container">
 		<div id="content">
+		
+			<!-- Add Customer button -->
+			<input type="button" 
+					value="Add Customer" 
+					onclick="window.location.href='showFormForAdd'; return false;"
+					class="add-button"
+					/> 
+			
+			<br>
+			
 			<table>
 				<tr>
 					<th>First Name</th>
 					<th>Last Name</th>
 					<th>Email</th>
+					<th>Action</th>
 				</tr>
 
 				<!-- loop over and print customers -->
 				<c:forEach var="tempCustomer" items="${customers}">
+				
+					<c:url var="updateLink" value="/customer/showFormForUpdate">
+						<c:param name="customerId" value="${tempCustomer.id}" />
+					</c:url>
+				
 					<tr>
 						<td>
 							${tempCustomer.firstName}
@@ -38,6 +54,9 @@
 						</td>
 						<td>
 							${tempCustomer.email}
+						</td>
+						<td>
+							<a href="${updateLink}">Update</a>
 						</td>
 					</tr>
 				</c:forEach>

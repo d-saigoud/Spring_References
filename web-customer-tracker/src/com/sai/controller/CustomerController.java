@@ -5,23 +5,31 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import com.sai.dao.CustomerDAO;
 import com.sai.entity.Customer;
+import com.sai.service.CustomerService;
 
 @Controller
 @RequestMapping("/customer")
 public class CustomerController {
 
-	@Autowired
-	private CustomerDAO customerDao;
+//	@Autowired
+//	private CustomerDAO customerDao;
 	
-	@RequestMapping("/list")
+	@Autowired
+	private CustomerService customerService;
+	
+//	@RequestMapping("/list")
+	@GetMapping("/list")
 	public String listCustomers(Model model) {
 		
-		//Get Customers from Dao
-		List<Customer> customers = customerDao.getCustomers();
+		//Get Customers from Service
+		List<Customer> customers = customerService.getCustomers();
 		
 		//Add customers to the model
 		model.addAttribute("customers", customers);
@@ -29,4 +37,28 @@ public class CustomerController {
 		return "list-customers";
 	}
 	
+	@GetMapping("/showFormForAdd")
+	public String showFormForAdd(Model model) {
+		
+		Customer customer = new Customer();
+		
+		model.addAttribute("customer", customer);
+		
+		return "customer-form";
+	}
+	
+	@PostMapping("/saveCustomer")
+	public String saveCustomer(@ModelAttribute("customer") Customer customer) {
+		
+		customerService.saveCustomer(customer);
+		
+		return "redirect:/customer/list";
+	}
+	
+	@GetMapping("/showFormForUpdate")
+	public String showFormForUpdate(@RequestParam("customerId") int customerId, Model model) {
+		Customer customer = customerService.getCustomer(customerId);
+		model.addAttribute("customer", customer);
+		return "customer-form";
+	}
 }
